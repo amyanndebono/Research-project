@@ -1,25 +1,29 @@
 from bs4 import BeautifulSoup
 import requests
-import re 
 
-#url = "https://www.gov.uk/foreign-travel-advice/malta/entry-requirements"
+italyURL ='https://www.salute.gov.it/portale/nuovocoronavirus/dettaglioContenutiNuovoCoronavirus.jsp?lingua=english&id=5412&area=nuovoCoronavirus&menu=vuoto'
+result = requests.get(italyURL)
+doc = BeautifulSoup(result.text, "html.parser")
 
-italyUrl = "https://www.salute.gov.it/portale/nuovocoronavirus/dettaglioContenutiNuovoCoronavirus.jsp?lingua=english&id=5412&area=nuovoCoronavirus&menu=vuoto"
+#Attempting to access paragraph by first finding the word and the retrieving the parent. 
+#rules =  doc.find_all(text="rules")
 
-results =requests.get(italyUrl)
-doc = BeautifulSoup(results.text, "html.parser")
+#Attempting to pass through the paragraph diectly 
+#para = doc.find('p').find_next('The rules')
+para = doc.find_all("p")
 
-rules = doc.find_all(text="rules")
+for text in para:
+  print(text.get_text())
 
-print(rules)
+#print(para)
 
-#allPara = doc.find_all("p")
-#for x in allPara:
-   # print(x.prettify())
- #   allTraveller = x.find_all(text ="All travellers")
-    
-#parent = allTraveller[0].parent
-#print(parent)
 
-#print(allTraveller)
+#Attempting to access p from div 
 
+#allDiv = doc.find_all('p')
+#for x in allDiv: 
+  #allPara = x.find('p')#.find_next(text ='rules')
+  #print(x)
+ # rules = x.find_all(text = "rules")
+  
+#print(rules)
