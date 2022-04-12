@@ -67,3 +67,6 @@ for text in para:
  # rules = x.find_all(text = "rules")
   
 #print(rules)
+
+
+
