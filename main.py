@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from pip import main
 import requests
 from tkinter import * 
-from matplotlib.pyplot import show
 from tkinter import ttk 
 
 germanyUrl = 'https://www.auswaertiges-amt.de/en/visa-service/EinreiseUndAufenthalt'
@@ -25,43 +24,50 @@ main_frame = Frame(root)
 main_frame.pack(fill=BOTH, expand=1)
 
 my_canvas = Canvas(main_frame)
-my_canvas.pack(side=LEFT, fill=BOTH , expand=1)
+my_canvas.pack(side=LEFT, fill=BOTH , expand=-1)
 
 scroll_barY = ttk.Scrollbar(main_frame, orient=VERTICAL, command=my_canvas.yview)
-#scroll_barX = ttk.Scrollbar(main_frame, orient=HORIZONTAL, command=my_canvas.xview)
+scroll_barX = ttk.Scrollbar(main_frame, orient=HORIZONTAL, command=my_canvas.xview)
 scroll_barY.pack(side=RIGHT, fill=Y)
-# scroll_barX.pack(side=RIGHT, fill=X)
+scroll_barX.pack(side=BOTTOM, fill=X)
 
 
 my_canvas.configure(yscrollcommand=scroll_barY)
-#my_canvas.configure(xscrollcommand=scroll_barX)
+my_canvas.configure(xscrollcommand=scroll_barX)
 
 my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion= my_canvas.bbox("all")))
 
 second_frame = Frame(my_canvas)
 
-my_canvas.create_window((0,0), window=second_frame, anchor="nw")
-myLabel =Label(second_frame, text="").pack()
+my_canvas.create_window((0,0), window=second_frame, anchor="n")
 
 
-def scrape(url):
+
+def scrape(url ):
   result = requests.get(url)
   doc = BeautifulSoup(result.text, "html.parser")
   para = doc.find_all("p")
-  
+  info=[]
   for text in para: 
-   myLabel =Label(second_frame, text=text.get_text()).pack()
+    info.append(text.get_text())
+  
+  combined_info ="\n".join(info)
+  
+  myLabel.config( text = combined_info)
 
+def remove_text():
+  myLabel.config(text="")
 
 def show():
   if(clicked.get() == 'Malta' ):
-    myLabel =Label(second_frame, text="").pack()
+    
     scrape(MaltaUrl)
   
   elif (clicked.get() == 'Italy'):
-   myLabel =Label(second_frame, text="").pack()
-   scrape(italyURL)
-
+   
+    #remove_text()
+  # myLabel =Label(second_frame, text="").pack()
+    scrape(italyURL)
 
   elif(clicked.get() == 'France'): 
      scrape(FranceURL)
@@ -76,7 +82,7 @@ def show():
    scrape(UkURL)
 
   elif (clicked.get() == 'Spain'): 
-    scrape(spainURL)
+    scrape(spainURL,myLabel)
 
   elif (clicked.get() == 'Portugal'):
    scrape(portugalURL)
@@ -100,6 +106,13 @@ drop = OptionMenu(second_frame, clicked, *options )
 
 drop.pack()
 
-showButton = Button(second_frame, text="Show Covid Regulations", command=show).pack()
+showButton = Button(second_frame, text="Show Covid Regulations", command=show)
+showButton.pack()
+clearButton = Button(second_frame,text="Clear text to select a different country", command=remove_text)
+clearButton.pack()
+
+myLabel =Label(second_frame, text="")
+myLabel.pack()
+
 root.mainloop()
 
